@@ -13,13 +13,13 @@ from sklearn.gaussian_process.kernels import RBF
 # from xgboost import XGBRegressor
 n = 1000
 h = np.load(f'H6Length{n}.npy')
-h_sp = h[2][1:4]
+h_sp = h[2][0:5]
 
 class cluster:
-    def __init__(self,n_tran=11):
+    def __init__(self,n_tran=17):
         self.n_tran = n_tran
         self.mid_tran = self.n_tran//2
-        self.trun_len = 3
+        self.trun_len = 5
         self.mid_trun = self.trun_len//2
     
     def fitModel(self,neigh=1):
@@ -95,6 +95,23 @@ class cluster:
 
 # plt.plot(rng,Y)
 # plt.show()
+
+
+rng = range(4,11,2)
+num_it = [10,100,100,500]
+Y = []
+sysModel = cluster()
+sysModel.fitModel()
+for i,v in zip(rng,num_it):
+    Y += [sysModel.testModel(ebno=i,num_iteration=v)]
+
+uncoded6_SD = [0.0404, 0.017024793388429754, 0.002578268876611418, 0.00026040995230114736]
+plt.yscale("log")
+plt.plot(rng,Y,'rx-')
+plt.plot(rng,uncoded6_SD,'bo-')
+plt.ylabel('BER')
+plt.xlabel('eb/no')
+plt.show()
 
 
 

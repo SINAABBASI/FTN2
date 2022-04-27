@@ -1,9 +1,8 @@
 from os import sep
-from matplotlib import projections
 import numpy as np
 import matplotlib.pyplot as plt
-
-ch = [0.34, 0.85, 0.34]
+from mpl_toolkits import mplot3d
+ch = [0.36, 0.85, 0.36]
 ch = np.array(ch)
 n = 5 #mf
 dim = 3
@@ -31,9 +30,7 @@ print(*c_points,sep='\n')
 print(len(c_points))
 
 fig = plt.figure()
-ax = fig.add_subplot(
-    projection='3d'
-    )
+ax = plt.axes(projection="3d")
 ax.scatter(o[0],o[1],o[2],c=color)
 
 plt.show()

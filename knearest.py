@@ -8,27 +8,36 @@ from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.mixture import GaussianMixture
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn.gaussian_process.kernels import RBF
 # from xgboost import XGBRegressor
 n = 1000
 h = np.load(f'H6Length{n}.npy')
 h_sp = h[2][0:5]
+# h_sp = h[3][0:7]
+# ch_pw = 
+# ch_h = np.random.normal(0,np.sqrt(chPw/2),(n,n))
+# print(h[3][0:7])
 
 class cluster:
-    def __init__(self,n_tran=17):
+    def __init__(self,n_tran=19):
         self.n_tran = n_tran
         self.mid_tran = self.n_tran//2
         self.trun_len = 5
         self.mid_trun = self.trun_len//2
     
     def fitModel(self,neigh=1):
+        pos = []
+        neg = []
+        # cnt = 0
         points = set()
-        X = [[]for _ in range(2**self.n_tran)]
+        X = []
+        XX = []
         Y = []
+        YY = []
         for i in range(2**self.n_tran):
             temp = 0
-            co = 0
             sig = []
             for j in range(self.n_tran):
                 if (i&(2**j)) != 0:
@@ -39,16 +48,43 @@ class cluster:
             Y += [sig[self.mid_tran]]
             for j in range(self.mid_trun,self.n_tran - self.mid_trun):
                 o += [np.round(np.dot(sig[j-self.mid_trun:j+self.mid_trun+1],h_sp),4)]
-            X[i] = o
+            X += [o]
             points.add(tuple(o)) 
+            
+
+            if sig[self.mid_tran] < 0: 
+                neg += [o[len(o)//2]]
+            else:
+                pos += [o[len(o)//2]]
+            
+
             temp = np.round(temp,4)
+        
+
         print("number of cluster points:", len(points))
         X = np.array(X)
         Y = np.array(Y)
+        XX = np.array(XX)
+        YY = np.array(YY)
+        pos = np.unique(pos)
+        neg = np.unique(neg)
+        print(*pos)
+        # print(cnt)
+        print("-*******-")
+        print(*neg)
+
+
+
         print('cluster points shape',X.shape)
-        self.model = KNeighborsClassifier(n_neighbors=neigh).fit(X,Y)
-        print('error in training:',sum(self.model.predict(X) != Y))
+        self.model = KNeighborsClassifier(n_neighbors=neigh,weights='distance').fit(X,Y)
+        # self.model = MLPClassifier(random_state=1, max_iter=300).fit(X,Y)
+        print('error in training:', sum(self.model.predict(X) != Y))
         return self.model
+
+    def reduced_model(self):
+        
+        return
+    
     
     def testModel(self,ebno,num_iteration):
         noisePw = 1/(10**(ebno/10))
@@ -97,15 +133,19 @@ class cluster:
 # plt.show()
 
 
-rng = range(4,11,2)
-num_it = [10,100,100,500]
+rng = range(4,13,2)
+num_it = [10,100,100,1000,1000]
 Y = []
 sysModel = cluster()
 sysModel.fitModel()
 for i,v in zip(rng,num_it):
     Y += [sysModel.testModel(ebno=i,num_iteration=v)]
 
-uncoded6_SD = [0.0404, 0.017024793388429754, 0.002578268876611418, 0.00026040995230114736]
+uncoded6_SD = [0.0404, 0.017024793388429754, 0.002578268876611418, 0.00026040995230114736, 5.66213743e-06]
+# uncoded5_SD = [0.08416667, 0.04545455, 0.01043796, 0.00117042]
+# array([0.0816]), array([0.04938272]), array([0.00764818]), array([0.00138072])
+# [array([0.08416667]), array([0.03162791]), array([0.00793651]), array([0.00103977])]
+
 plt.yscale("log")
 plt.plot(rng,Y,'rx-')
 plt.plot(rng,uncoded6_SD,'bo-')
@@ -115,13 +155,3 @@ plt.show()
 
 
 
-
-exit()
-
-print(*pos_out,sep='\n')
-print(len(pos_out))
-
-plt.scatter(pos_out,[0]*len(pos_out),c=color)
-plt.show()
-# print(h_sp)
-# for i in range(2**n)

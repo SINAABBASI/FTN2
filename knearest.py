@@ -102,6 +102,7 @@ class cluster:
 
             Y = np.array(Y)
             Y_t = self.model.predict(X_t)
+            print(np.unique(Y_t))
             err += [sum(Y_t != Y)/len(Y)]
         print(np.mean(err))
         return np.mean(err)
@@ -132,8 +133,10 @@ class cluster:
 # plt.show()
 
 
-rng = range(4,13,2)
-num_it = [10,10,100,100,1000]
+# rng = range(4,13,2)
+# num_it = [10,10,100,100,1000]
+rng = [12]
+num_it = [1000]
 Y = []
 sysModel = cluster()
 sysModel.fitModel()

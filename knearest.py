@@ -1,6 +1,5 @@
 from os import sep
 from random import randrange, seed
-from turtle import shape
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.cluster import KMeans, SpectralClustering
@@ -134,7 +133,7 @@ class cluster:
 
 
 rng = range(4,13,2)
-num_it = [10,100,100,1000,1000]
+num_it = [10,10,100,100,1000]
 Y = []
 sysModel = cluster()
 sysModel.fitModel()
@@ -142,7 +141,8 @@ for i,v in zip(rng,num_it):
     Y += [sysModel.testModel(ebno=i,num_iteration=v)]
 
 uncoded6_SD = [0.0404, 0.017024793388429754, 0.002578268876611418, 0.00026040995230114736, 5.66213743e-06]
-# uncoded5_SD = [0.08416667, 0.04545455, 0.01043796, 0.00117042]
+# uncoded5_SD = [0.07172414, 0.03961905, 0.00739927, 0.00101771, 5.36256457e-05]
+
 # array([0.0816]), array([0.04938272]), array([0.00764818]), array([0.00138072])
 # [array([0.08416667]), array([0.03162791]), array([0.00793651]), array([0.00103977])]
 
@@ -152,6 +152,40 @@ plt.plot(rng,uncoded6_SD,'bo-')
 plt.ylabel('BER')
 plt.xlabel('eb/no')
 plt.show()
+
+
+
+## 13 observation
+# tau = 0.6
+# 0.051219512195121955
+# 0.016880081300813005
+# 0.004278455284552845
+# 0.0004085365853658537
+# 2.7439024390243903e-05
+
+# tau = 0.5
+# 0.09470468431771893
+# 0.04675152749490835
+# 0.013951120162932791
+# 0.0026680244399185336
+# 0.00026272912423625254
+
+
+
+## 15 observation
+# tau = 0.6
+# 0.057433808553971476
+# 0.018228105906313647
+# 0.0032790224032586564
+# 0.0003971486761710794
+# 3.1568228105906315e-05
+
+# tau = 0.5
+# 0.09010204081632653
+# 0.04408163265306122
+# 0.012030612244897957
+# 0.0019183673469387757
+# 0.00017448979591836735
 
 
 

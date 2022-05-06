@@ -6,6 +6,7 @@ from sklearn.cluster import KMeans, SpectralClustering
 from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.mixture import GaussianMixture
+from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
@@ -13,14 +14,17 @@ from sklearn.gaussian_process.kernels import RBF
 # from xgboost import XGBRegressor
 n = 1000
 h = np.load(f'H6Length{n}.npy')
-h_sp = h[2][0:5]
-# h_sp = h[3][0:7]
+
+# h_sp = h[1][0:3] #ch_l = 3
+h_sp = h[2][0:5] #ch_l = 5
+# h_sp = h[3][0:7] #ch_l = 7
+# h_sp = h[4][0:9] #ch_l = 9
 # ch_pw = 
 # ch_h = np.random.normal(0,np.sqrt(chPw/2),(n,n))
-# print(h[3][0:7])
+print(h_sp)
 
 class cluster:
-    def __init__(self,n_tran=19):
+    def __init__(self,n_tran=17):
         self.n_tran = n_tran
         self.mid_tran = self.n_tran//2
         self.trun_len = 5
@@ -51,10 +55,10 @@ class cluster:
             points.add(tuple(o)) 
             
 
-            if sig[self.mid_tran] < 0: 
-                neg += [o[len(o)//2]]
-            else:
-                pos += [o[len(o)//2]]
+            # if sig[self.mid_tran] < 0: 
+            #     neg += [o[len(o)//2]]
+            # else:
+            #     pos += [o[len(o)//2]]
             
 
             temp = np.round(temp,4)
@@ -76,7 +80,7 @@ class cluster:
 
         print('cluster points shape',X.shape)
         self.model = KNeighborsClassifier(n_neighbors=neigh,weights='distance').fit(X,Y)
-        # self.model = MLPClassifier(random_state=1, max_iter=300).fit(X,Y)
+        # self.model = GaussianNB().fit(X,Y)
         print('error in training:', sum(self.model.predict(X) != Y))
         return self.model
 
@@ -90,6 +94,7 @@ class cluster:
         dim = self.n_tran - self.trun_len + 1
         err = []
         for _ in range(num_iteration):
+            print(_)
             s = 2*np.random.randint(2,size=(n,1))-1
             noise = np.sqrt(noisePw/2)*np.random.standard_normal((n,1))
             r = np.dot(h,s) + noise
@@ -99,11 +104,19 @@ class cluster:
                 for id,val in enumerate(r[i-dim//2:i+dim//2+1]):
                     X_t[i-self.mid_tran][id] = np.round(val,4)
                 Y += [1 if s[i] > 0 else -1]
-
             Y = np.array(Y)
+            
+
+            
             Y_t = self.model.predict(X_t)
-            print(np.unique(Y_t))
             err += [sum(Y_t != Y)/len(Y)]
+            # print(np.shape(X_t))
+            # print(np.shape(Y_t))
+            # print(np.shape(Y))
+            # for i in range(986):
+            #     if Y_t[i] != Y[i] :
+            #         print(Y_t[i],Y[i])
+            #         print(X_t[i])
         print(np.mean(err))
         return np.mean(err)
 
@@ -111,15 +124,19 @@ class cluster:
 # model = SVC(gamma=2, C=2).fit(X,Y)
 
 
-# rng = range(3,15,2)
-# Y = []
-# for i in rng:
-#     sysModel = cluster(n_tran=i)
-#     sysModel.fitModel()
-#     Y += [sysModel.testModel(ebno=6,num_iteration=100)]
+rng = [19]
+Y = []
+for i in rng:
+    sysModel = cluster()
+    sysModel.fitModel()
+    Y += [sysModel.testModel(ebno=12,num_iteration=2000)]
 
-# plt.plot(rng,Y)
-# plt.show()
+plt.plot(rng,Y)
+plt.show()
+
+# [3,5,7,9]
+# 0.0010289046653144016, 5.397148676171079e-05, 4.5824847250509165e-05, 4.2857142857142856e-05
+
 
 
 # rng = range(1,6,2)
@@ -135,26 +152,26 @@ class cluster:
 
 # rng = range(4,13,2)
 # num_it = [10,10,100,100,1000]
-rng = [12]
-num_it = [1000]
-Y = []
-sysModel = cluster()
-sysModel.fitModel()
-for i,v in zip(rng,num_it):
-    Y += [sysModel.testModel(ebno=i,num_iteration=v)]
+# rng = [12]
+# num_it = [1000]
+# Y = []
+# sysModel = cluster(n_tran=15)
+# sysModel.fitModel()
+# for i,v in zip(rng,num_it):
+#     Y += [sysModel.testModel(ebno=i,num_iteration=v)]
 
-uncoded6_SD = [0.0404, 0.017024793388429754, 0.002578268876611418, 0.00026040995230114736, 5.66213743e-06]
-# uncoded5_SD = [0.07172414, 0.03961905, 0.00739927, 0.00101771, 5.36256457e-05]
+# uncoded6_SD = [0.0404, 0.017024793388429754, 0.002578268876611418, 0.00026040995230114736, 5.66213743e-06]
+# # uncoded5_SD = [0.07172414, 0.03961905, 0.00739927, 0.00101771, 5.36256457e-05]
 
-# array([0.0816]), array([0.04938272]), array([0.00764818]), array([0.00138072])
-# [array([0.08416667]), array([0.03162791]), array([0.00793651]), array([0.00103977])]
+# # array([0.0816]), array([0.04938272]), array([0.00764818]), array([0.00138072])
+# # [array([0.08416667]), array([0.03162791]), array([0.00793651]), array([0.00103977])]
 
-plt.yscale("log")
-plt.plot(rng,Y,'rx-')
-plt.plot(rng,uncoded6_SD,'bo-')
-plt.ylabel('BER')
-plt.xlabel('eb/no')
-plt.show()
+# plt.yscale("log")
+# plt.plot(rng,Y,'rx-')
+# plt.plot(rng,uncoded6_SD,'bo-')
+# plt.ylabel('BER')
+# plt.xlabel('eb/no')
+# plt.show()
 
 
 

@@ -4,11 +4,11 @@ import numpy as np
 
 
 
-trn = 5
+trn = 6
 ts = 0.1
 Th = 1
-T = 0.5
-tOverTs = 5
+T = 0.6
+tOverTs = 6
 t = [i/10 for i in range(int(-trn/ts),int(trn/ts)+1)]
 
 rollOfFac = 0.35
@@ -33,7 +33,7 @@ co = co[int(trn/ts):int(trn/ts)+len(c)]
 
 
 
-l = 1000
+l = 13
 plt.stem(c)
 plt.show()
 c = downsample(c,tOverTs)
